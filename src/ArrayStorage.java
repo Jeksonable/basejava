@@ -33,16 +33,15 @@ public class ArrayStorage {
         while (i < size) {
             if (storage[i].uuid.equals(uuid)) {
                 storage[i] = null;
+                size--;
                 break;
             }
             i++;
         }
-        while (i < size - 1) {
+        while (i < size) {
             storage[i] = storage[i + 1];
-            storage[i + 1] = null;
             i++;
         }
-        size--;
     }
 
     /**
