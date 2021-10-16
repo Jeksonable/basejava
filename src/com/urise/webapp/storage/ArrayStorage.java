@@ -12,39 +12,49 @@ public class ArrayStorage {
     private int size = 0;
 
     public void clear() {
-        for (int i = 0; i < size; i++) {
-            storage[i] = null;
-        }
+        Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
+    public void update(Resume r) {
+        if (indexOf(r.getUuid()) < 0) {
+            System.out.println("Update error: resume " + r + " is out of storage!");
+        } else {
+            System.out.println("Resume " + r + " is updated!");
+        }
+    }
+
     public void save(Resume r) {
-        storage[size] = r;
-        size++;
+        if (indexOf(r.getUuid()) < 0) {
+            if (size < storage.length) {
+                storage[size] = r;
+                size++;
+            } else {
+                System.out.println("Save error: storage is full!");
+            }
+        } else {
+            System.out.println("Save error: resume " + r + " is already in storage!");
+        }
     }
 
     public Resume get(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                return storage[i];
-            }
+        int index = indexOf(uuid);
+        if (index < 0) {
+            System.out.println("Get error: resume " + uuid + " is out of storage!");
+            return null;
+        } else {
+            return storage[index];
         }
-        return null;
     }
 
     public void delete(String uuid) {
-        int i = 0;
-        while (i < size) {
-            if (storage[i].getUuid().equals(uuid)) {
-                storage[i] = null;
-                size--;
-                break;
-            }
-            i++;
-        }
-        while (i < size) {
-            storage[i] = storage[i + 1];
-            i++;
+        int index = indexOf(uuid);
+        if (index < 0) {
+            System.out.println("Delete error: resume " + uuid + " is out of storage!");
+        } else {
+            storage[index] = storage[size - 1];
+            storage[size - 1] = null;
+            size--;
         }
     }
 
@@ -57,5 +67,14 @@ public class ArrayStorage {
 
     public int size() {
         return size;
+    }
+
+    private int indexOf(String uuid) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuid)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

@@ -33,6 +33,10 @@ public class MainTestArrayStorage {
         printAll();
 
         System.out.println("Size: " + ARRAY_STORAGE.size());
+
+        ARRAY_STORAGE.update(r1);
+        ARRAY_STORAGE.save(r1);
+        ARRAY_STORAGE.update(r1);
     }
 
     private static void printAll() {
