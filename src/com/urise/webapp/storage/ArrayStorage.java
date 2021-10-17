@@ -17,9 +17,11 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        if (indexOf(r.getUuid()) < 0) {
+        int index = indexOf(r.getUuid());
+        if (index < 0) {
             System.out.println("Update error: resume " + r + " is out of storage!");
         } else {
+            storage[index] = r;
             System.out.println("Resume " + r + " is updated!");
         }
     }
@@ -42,9 +44,8 @@ public class ArrayStorage {
         if (index < 0) {
             System.out.println("Get error: resume " + uuid + " is out of storage!");
             return null;
-        } else {
-            return storage[index];
         }
+        return storage[index];
     }
 
     public void delete(String uuid) {
