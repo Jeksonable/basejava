@@ -1,5 +1,8 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.exception.ExistStorageException;
+import com.urise.webapp.exception.NotExistStorageException;
+import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -18,7 +21,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public void update(Resume r) {
         int index = indexOf(r.getUuid());
         if (index < 0) {
-            System.out.println("Update error: resume " + r + " is out of storage!");
+            throw new NotExistStorageException(r.getUuid());
         } else {
             storage[index] = r;
             System.out.println("Resume " + r + " is updated!");
@@ -32,18 +35,17 @@ public abstract class AbstractArrayStorage implements Storage {
                 insertResume(r, index);
                 size++;
             } else {
-                System.out.println("Save error: storage is full!");
+                throw new StorageException("Save error: storage is full!", r.getUuid());
             }
         } else {
-            System.out.println("Save error: resume " + r + " is already in storage!");
+            throw new ExistStorageException(r.getUuid());
         }
     }
 
     public Resume get(String uuid) {
         int index = indexOf(uuid);
         if (index < 0) {
-            System.out.println("Get error: resume " + uuid + " is out of storage!");
-            return null;
+            throw new NotExistStorageException(uuid);
         }
         return storage[index];
     }
@@ -51,7 +53,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public void delete(String uuid) {
         int index = indexOf(uuid);
         if (index < 0) {
-            System.out.println("Delete error: resume " + uuid + " is out of storage!");
+            throw new NotExistStorageException(uuid);
         } else {
             deleteResume(index);
             storage[size - 1] = null;
