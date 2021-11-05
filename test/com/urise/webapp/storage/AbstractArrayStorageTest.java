@@ -8,6 +8,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+
+import static com.urise.webapp.storage.AbstractArrayStorage.STORAGE_LIMIT;
+
 public abstract class AbstractArrayStorageTest {
     private Storage storage;
     public static final String UUID_1 = "uuid1";
@@ -45,10 +50,12 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test
-    public void save() {
-        Resume r = new Resume("setTest");
-        storage.save(r);
-        Assert.assertNotNull(storage.get(r.getUuid()));
+    public void save() throws NoSuchFieldException, IllegalAccessException {
+        Field field = storage.getClass().getSuperclass().getDeclaredField("size");
+        int beforeDelete = (int) field.get(storage);
+        storage.save(new Resume("setTest"));
+        int afterDelete = (int) field.get(storage);
+        Assert.assertNotEquals(beforeDelete, afterDelete);
     }
 
     @Test(expected = ExistStorageException.class)
@@ -57,10 +64,10 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test
-    public void get() {
-        Resume r = new Resume("getTest");
-        storage.save(r);
-        Assert.assertEquals(r, storage.get("getTest"));
+    public void get() throws NoSuchFieldException, IllegalAccessException {
+        Field field = storage.getClass().getSuperclass().getDeclaredField("storage");
+        Resume r = (Resume) Array.get(field.get(storage), 0);
+        Assert.assertEquals(r, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -68,10 +75,13 @@ public abstract class AbstractArrayStorageTest {
         storage.get("dummy");
     }
 
-    @Test(expected = NotExistStorageException.class)
-    public void delete() {
+    @Test
+    public void delete() throws NoSuchFieldException, IllegalAccessException {
+        Field field = storage.getClass().getSuperclass().getDeclaredField("size");
+        int beforeDelete = (int) field.get(storage);
         storage.delete(UUID_1);
-        storage.get(UUID_1);
+        int afterDelete = (int) field.get(storage);
+        Assert.assertNotEquals(beforeDelete, afterDelete);
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -80,8 +90,12 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test
-    public void getAll() {
-        Resume[] allResumes = {storage.get(UUID_1), storage.get(UUID_2), storage.get(UUID_3)};
+    public void getAll() throws NoSuchFieldException, IllegalAccessException {
+        Field field = storage.getClass().getSuperclass().getDeclaredField("storage");
+        Resume[] allResumes = new Resume[storage.size()];
+        for (int i = 0; i < storage.size(); i++) {
+            allResumes[i] = (Resume) Array.get(field.get(storage), i);
+        }
         Assert.assertArrayEquals(allResumes, storage.getAll());
     }
 
@@ -91,12 +105,11 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test(expected = StorageException.class)
-    public void storageOverflow() throws IllegalAccessException {
+    public void storageOverflow() {
         storage.clear();
-        int limit = (int) storage.getClass().getSuperclass().getDeclaredFields()[0].get(storage);
         storage.getClass().getDeclaredFields();
         try {
-            for (int i = 0; i < limit; i++) {
+            for (int i = 0; i < STORAGE_LIMIT; i++) {
                 storage.save(new Resume());
             }
         } catch (StorageException e) {

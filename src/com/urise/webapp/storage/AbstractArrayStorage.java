@@ -22,24 +22,21 @@ public abstract class AbstractArrayStorage implements Storage {
         int index = indexOf(r.getUuid());
         if (index < 0) {
             throw new NotExistStorageException(r.getUuid());
-        } else {
-            storage[index] = r;
-            System.out.println("Resume " + r + " is updated!");
         }
+        storage[index] = r;
+        System.out.println("Resume " + r + " is updated!");
     }
 
     public void save(Resume r) {
         int index = indexOf(r.getUuid());
-        if (index < 0) {
-            if (size < STORAGE_LIMIT) {
-                insertResume(r, index);
-                size++;
-            } else {
-                throw new StorageException("Save error: storage is full!", r.getUuid());
-            }
-        } else {
+        if (index >= 0) {
             throw new ExistStorageException(r.getUuid());
         }
+        if (size >= STORAGE_LIMIT) {
+            throw new StorageException("Save error: storage is full!", r.getUuid());
+        }
+        insertResume(r, index);
+        size++;
     }
 
     public Resume get(String uuid) {
@@ -54,11 +51,10 @@ public abstract class AbstractArrayStorage implements Storage {
         int index = indexOf(uuid);
         if (index < 0) {
             throw new NotExistStorageException(uuid);
-        } else {
-            deleteResume(index);
-            storage[size - 1] = null;
-            size--;
         }
+        deleteResume(index);
+        storage[size - 1] = null;
+        size--;
     }
 
     public Resume[] getAll() {
