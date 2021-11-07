@@ -50,12 +50,9 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test
-    public void save() throws NoSuchFieldException, IllegalAccessException {
-        Field field = storage.getClass().getSuperclass().getDeclaredField("size");
-        int beforeDelete = (int) field.get(storage);
+    public void save() {
         storage.save(new Resume("setTest"));
-        int afterDelete = (int) field.get(storage);
-        Assert.assertNotEquals(beforeDelete, afterDelete);
+        Assert.assertEquals(4, storage.size());
     }
 
     @Test(expected = ExistStorageException.class)
@@ -76,12 +73,9 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test
-    public void delete() throws NoSuchFieldException, IllegalAccessException {
-        Field field = storage.getClass().getSuperclass().getDeclaredField("size");
-        int beforeDelete = (int) field.get(storage);
+    public void delete() {
         storage.delete(UUID_1);
-        int afterDelete = (int) field.get(storage);
-        Assert.assertNotEquals(beforeDelete, afterDelete);
+        Assert.assertEquals(2, storage.size());
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -90,11 +84,14 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test
-    public void getAll() throws NoSuchFieldException, IllegalAccessException {
-        Field field = storage.getClass().getSuperclass().getDeclaredField("storage");
-        Resume[] allResumes = new Resume[storage.size()];
-        for (int i = 0; i < storage.size(); i++) {
-            allResumes[i] = (Resume) Array.get(field.get(storage), i);
+    public void getAll() {
+        storage.clear();
+        Resume r1 = new Resume(UUID_1);
+        Resume r2 = new Resume(UUID_2);
+        Resume r3 = new Resume(UUID_3);
+        Resume[] allResumes = {r1, r2, r3};
+        for (Resume resume : allResumes) {
+            storage.save(resume);
         }
         Assert.assertArrayEquals(allResumes, storage.getAll());
     }
@@ -107,7 +104,6 @@ public abstract class AbstractArrayStorageTest {
     @Test(expected = StorageException.class)
     public void storageOverflow() {
         storage.clear();
-        storage.getClass().getDeclaredFields();
         try {
             for (int i = 0; i < STORAGE_LIMIT; i++) {
                 storage.save(new Resume());
