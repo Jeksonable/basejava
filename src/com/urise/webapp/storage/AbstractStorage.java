@@ -17,7 +17,6 @@ public abstract class AbstractStorage implements Storage {
         if (index >= 0) {
             throw new ExistStorageException(r.getUuid());
         }
-        checkOverflow(r);
         insertResume(r, index);
     }
 
@@ -42,8 +41,6 @@ public abstract class AbstractStorage implements Storage {
     protected abstract int indexOf(String uuid);
 
     protected abstract void updateResume(int index, Resume r);
-
-    protected abstract void checkOverflow(Resume r);
 
     protected abstract void insertResume(Resume r, int index);
 

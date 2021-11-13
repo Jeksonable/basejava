@@ -44,9 +44,6 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void checkOverflow(Resume r) {/*check overflow implement in method add() from ArrayList*/}
-
-    @Override
     protected int indexOf(String uuid) {
         for (int i = 0; i < storage.size(); i++) {
             if (storage.get(i).getUuid().equals(uuid)) {

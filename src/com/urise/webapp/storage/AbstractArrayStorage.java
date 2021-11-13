@@ -50,7 +50,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    @Override
     protected void checkOverflow(Resume r) {
         if (size >= STORAGE_LIMIT) {
             throw new StorageException("Save error: storage is full!", r.getUuid());
