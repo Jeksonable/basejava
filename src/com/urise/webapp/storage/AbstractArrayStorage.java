@@ -1,73 +1,59 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.ExistStorageException;
-import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage implements Storage {
+public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10000;
 
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
+    @Override
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
-    public void update(Resume r) {
-        int index = indexOf(r.getUuid());
-        if (index < 0) {
-            throw new NotExistStorageException(r.getUuid());
-        }
+    @Override
+    protected void updateResume(int index, Resume r) {
         storage[index] = r;
-        System.out.println("Resume " + r + " is updated!");
     }
 
+    @Override
     public void save(Resume r) {
-        int index = indexOf(r.getUuid());
-        if (index >= 0) {
-            throw new ExistStorageException(r.getUuid());
-        }
-        if (size >= STORAGE_LIMIT) {
-            throw new StorageException("Save error: storage is full!", r.getUuid());
-        }
-        insertResume(r, index);
+        super.save(r);
         size++;
     }
 
-    public Resume get(String uuid) {
-        int index = indexOf(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        }
+    @Override
+    protected Resume getResume(int index) {
         return storage[index];
     }
 
+    @Override
     public void delete(String uuid) {
-        int index = indexOf(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        }
-        deleteResume(index);
+        super.delete(uuid);
         storage[size - 1] = null;
         size--;
     }
 
+    @Override
     public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
 
+    @Override
     public int size() {
         return size;
     }
 
-    protected abstract void insertResume(Resume r, int index);
-
-    protected abstract void deleteResume(int index);
-
-    protected abstract int indexOf(String uuid);
+    @Override
+    protected void checkOverflow(Resume r) {
+        if (size >= STORAGE_LIMIT) {
+            throw new StorageException("Save error: storage is full!", r.getUuid());
+        }
+    }
 }
