@@ -17,7 +17,7 @@ public abstract class AbstractStorage implements Storage {
         if (index >= 0) {
             throw new ExistStorageException(r.getUuid());
         }
-        insertResume(r, index);
+        saveResume(r, index);
     }
 
     @Override
@@ -42,7 +42,7 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract void updateResume(int index, Resume r);
 
-    protected abstract void insertResume(Resume r, int index);
+    protected abstract void saveResume(Resume r, int index);
 
     protected abstract Resume getResume(int index);
 
