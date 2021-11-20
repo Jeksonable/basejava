@@ -22,12 +22,12 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        return getResume(getIndexExistResume(uuid));
+        return getResume(getIndexExistResume(uuid), uuid);
     }
 
     @Override
     public void delete(String uuid) {
-        deleteResume(getIndexExistResume(uuid));
+        deleteResume(getIndexExistResume(uuid), uuid);
     }
 
     private int getIndexExistResume(String uuid) {
@@ -44,7 +44,7 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract void saveResume(Resume r, int index);
 
-    protected abstract Resume getResume(int index);
+    protected abstract Resume getResume(int index, String uuid);
 
-    protected abstract void deleteResume(int index);
+    protected abstract void deleteResume(int index, String uuid);
 }

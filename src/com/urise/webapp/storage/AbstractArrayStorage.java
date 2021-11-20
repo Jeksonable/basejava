@@ -32,12 +32,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getResume(int index) {
+    protected Resume getResume(int index, String uuid) {
         return storage[index];
     }
 
     @Override
-    public void deleteResume(int index) {
+    public void deleteResume(int index, String uuid) {
         removeResume(index);
         storage[size - 1] = null;
         size--;
