@@ -18,27 +18,27 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateResume(int index, Resume r) {
-        storage[index] = r;
+    protected void updateResume(Object searchKey, Resume r) {
+        storage[(int) searchKey] = r;
     }
 
     @Override
-    public void saveResume(Resume r, int index) {
+    public void saveResume(Resume r, Object searchKey) {
         if (size >= STORAGE_LIMIT) {
             throw new StorageException("Save error: storage is full!", r.getUuid());
         }
-        insertResume(r, index);
+        insertResume(r, (int) searchKey);
         size++;
     }
 
     @Override
-    protected Resume getResume(int index, String uuid) {
-        return storage[index];
+    protected Resume getResume(Object searchKey) {
+        return storage[(int) searchKey];
     }
 
     @Override
-    public void deleteResume(int index, String uuid) {
-        removeResume(index);
+    public void deleteResume(Object searchKey) {
+        removeResume((int) searchKey);
         storage[size - 1] = null;
         size--;
     }

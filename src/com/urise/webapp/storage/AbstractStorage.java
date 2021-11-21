@@ -8,43 +8,43 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void update(Resume r) {
-        updateResume(getIndexExistResume(r.getUuid()), r);
+        updateResume(getSearchKeyExistResume(r.getUuid()), r);
     }
 
     @Override
     public void save(Resume r) {
-        int index = indexOf(r.getUuid());
-        if (index >= 0) {
+        Object searchKey = searchKeyOf(r.getUuid());
+        if (searchKey instanceof String || (Integer) searchKey >= 0) {
             throw new ExistStorageException(r.getUuid());
         }
-        saveResume(r, index);
+        saveResume(r, searchKey);
     }
 
     @Override
     public Resume get(String uuid) {
-        return getResume(getIndexExistResume(uuid), uuid);
+        return getResume(getSearchKeyExistResume(uuid));
     }
 
     @Override
     public void delete(String uuid) {
-        deleteResume(getIndexExistResume(uuid), uuid);
+        deleteResume(getSearchKeyExistResume(uuid));
     }
 
-    private int getIndexExistResume(String uuid) {
-        int index = indexOf(uuid);
-        if (index < 0) {
+    private Object getSearchKeyExistResume(String uuid) {
+        Object searchKey = searchKeyOf(uuid);
+        if (searchKey instanceof Integer && (Integer) searchKey < 0) {
             throw new NotExistStorageException(uuid);
         }
-        return index;
+        return searchKey;
     }
 
-    protected abstract int indexOf(String uuid);
+    protected abstract Object searchKeyOf(String uuid);
 
-    protected abstract void updateResume(int index, Resume r);
+    protected abstract void updateResume(Object searchKey, Resume r);
 
-    protected abstract void saveResume(Resume r, int index);
+    protected abstract void saveResume(Resume r, Object searchKey);
 
-    protected abstract Resume getResume(int index, String uuid);
+    protected abstract Resume getResume(Object searchKey);
 
-    protected abstract void deleteResume(int index, String uuid);
+    protected abstract void deleteResume(Object searchKey);
 }
