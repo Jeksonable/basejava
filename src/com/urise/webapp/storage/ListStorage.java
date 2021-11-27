@@ -34,8 +34,10 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume[] getAll() {
-        return storage.toArray(new Resume[0]);
+    public List<Resume> getAllSorted() {
+        List<Resume> sortedStorage = new ArrayList<>(storage);
+        sortedStorage.sort(RESUME_NAME_COMPARATOR);
+        return sortedStorage;
     }
 
     @Override
@@ -51,5 +53,10 @@ public class ListStorage extends AbstractStorage {
             }
         }
         return -1;
+    }
+
+    @Override
+    protected boolean isExist (Object searchKey) {
+        return (Integer) searchKey >= 0;
     }
 }

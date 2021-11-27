@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class MapStorage extends AbstractStorage {
+public class MapResumeStorage extends AbstractStorage {
     private Map<String, Resume> storage = new TreeMap<>();
 
     @Override
     protected Object searchKeyOf(String uuid) {
-        return storage.containsKey(uuid) ? uuid : null;
+        return storage.getOrDefault(uuid, null);
     }
 
     @Override
@@ -27,14 +27,14 @@ public class MapStorage extends AbstractStorage {
 
     @Override
     protected Resume getResume(Object searchKey) {
-        String uuid = (String) searchKey;
-        return storage.get(uuid);
+        Resume r = (Resume) searchKey;
+        return storage.get(r.getUuid());
     }
 
     @Override
     protected void deleteResume(Object searchKey) {
-        String uuid = (String) searchKey;
-        storage.remove(uuid);
+        Resume r = (Resume) searchKey;
+        storage.remove(r.getUuid());
     }
 
     @Override
