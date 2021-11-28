@@ -2,10 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class MapResumeStorage extends AbstractStorage {
     private Map<String, Resume> storage = new TreeMap<>();
@@ -43,19 +40,17 @@ public class MapResumeStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> sortedStorage = new ArrayList<>(storage.values());
-        sortedStorage.sort(RESUME_NAME_COMPARATOR);
-        return sortedStorage;
-    }
-
-    @Override
     public int size() {
         return storage.size();
     }
 
     @Override
-    protected boolean isExist (Object searchKey) {
+    protected boolean isExist(Object searchKey) {
         return searchKey != null;
+    }
+
+    @Override
+    protected Collection<Resume> getResumeList() {
+        return storage.values();
     }
 }
