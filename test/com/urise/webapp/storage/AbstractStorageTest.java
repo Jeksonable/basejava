@@ -15,6 +15,9 @@ public abstract class AbstractStorageTest {
     public static final String UUID_1 = "uuid1";
     public static final String UUID_2 = "uuid2";
     public static final String UUID_3 = "uuid3";
+    public static final Resume RESUME_1 = new Resume(UUID_1, "Brian Price");
+    public static final Resume RESUME_2 = new Resume(UUID_2, "John Austin");
+    public static final Resume RESUME_3 = new Resume(UUID_3, "Mark Snow");
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -23,9 +26,9 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() {
         storage.clear();
-        storage.save(new Resume(UUID_1, ""));
-        storage.save(new Resume(UUID_2, ""));
-        storage.save(new Resume(UUID_3, ""));
+        storage.save(RESUME_1);
+        storage.save(RESUME_2);
+        storage.save(RESUME_3);
     }
 
     @Test
@@ -36,7 +39,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume r = new Resume(UUID_1, "");
+        Resume r = new Resume(UUID_1, "Ronald Ross");
         storage.update(r);
         Assert.assertEquals(r, storage.get(UUID_1));
     }
@@ -56,12 +59,12 @@ public abstract class AbstractStorageTest {
 
     @Test(expected = ExistStorageException.class)
     public void saveExist() {
-        storage.save(new Resume(UUID_1, ""));
+        storage.save(RESUME_1);
     }
 
     @Test
     public void get() {
-        Assert.assertEquals(new Resume(UUID_1, ""), storage.get(UUID_1));
+        Assert.assertEquals(RESUME_1, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -83,7 +86,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAllSorted() {
-        List<Resume> allResumes = Arrays.asList(new Resume(UUID_1, ""), new Resume(UUID_2, ""), new Resume(UUID_3, ""));
+        List<Resume> allResumes = Arrays.asList(RESUME_1, RESUME_2, RESUME_3);
         Assert.assertEquals(allResumes, storage.getAllSorted());
     }
 
