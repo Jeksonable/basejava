@@ -6,12 +6,7 @@ import java.util.List;
 public class BulletedListSection extends AbstractSection {
     private List<String> descriptions;
 
-    public BulletedListSection(String title) {
-        super(title);
-    }
-
-    public BulletedListSection(String title, List<String> descriptions) {
-        super(title);
+    public BulletedListSection(List<String> descriptions) {
         this.descriptions = descriptions;
     }
 
@@ -26,7 +21,6 @@ public class BulletedListSection extends AbstractSection {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n").append(title);
         descriptions.forEach((description) -> sb.append("\n").append(description));
         return sb.toString();
     }

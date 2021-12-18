@@ -3,12 +3,7 @@ package com.urise.webapp.model;
 public class SimpleSection extends AbstractSection {
     private String description;
 
-    public SimpleSection(String title) {
-        super(title);
-    }
-
-    public SimpleSection(String title, String description) {
-        super(title);
+    public SimpleSection(String description) {
         this.description = description;
     }
 
@@ -22,7 +17,6 @@ public class SimpleSection extends AbstractSection {
 
     @Override
     public String toString() {
-        String str = description == null ? "" : ("\n" + description);
-        return "\n" + title + str;
+        return "\n" + description;
     }
 }

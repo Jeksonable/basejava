@@ -6,12 +6,7 @@ import java.util.List;
 public class Organization extends AbstractSection {
     private List<Experience> experiences;
 
-    public Organization(String title) {
-        super(title);
-    }
-
-    public Organization(String title, List<Experience> experiences) {
-        super(title);
+    public Organization(List<Experience> experiences) {
         this.experiences = experiences;
     }
 
@@ -26,7 +21,6 @@ public class Organization extends AbstractSection {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n").append(title);
         experiences.forEach((experience) -> sb.append("\n").append(experience));
         return sb.toString();
     }

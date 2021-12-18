@@ -69,11 +69,13 @@ public class Resume {
         if (o == null || getClass() != o.getClass()) return false;
         Resume resume = (Resume) o;
         return uuid.equals(resume.uuid) &&
-                fullName.equals(resume.fullName);
+                fullName.equals(resume.fullName) &&
+                Objects.equals(contacts, resume.contacts) &&
+                Objects.equals(sections, resume.sections);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, fullName);
+        return Objects.hash(uuid, fullName, contacts, sections);
     }
 }

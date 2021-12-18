@@ -1,22 +1,12 @@
 package com.urise.webapp.model;
 
 public class Contact {
-    private String title;
     private String content;
     private String url;
 
-    public Contact(String title, String content, String url) {
-        this.title = title;
+    public Contact(String content, String url) {
         this.content = content;
         this.url = url;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContent() {
@@ -37,6 +27,6 @@ public class Contact {
 
     @Override
     public String toString() {
-        return title + content;
+        return content;
     }
 }
