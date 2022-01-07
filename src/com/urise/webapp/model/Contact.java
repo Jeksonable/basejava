@@ -1,32 +1,44 @@
 package com.urise.webapp.model;
 
-public class Contact {
-    private String content;
-    private String url;
+import java.util.Objects;
 
-    public Contact(String content, String url) {
-        this.content = content;
+public class Contact {
+    private final String name;
+    private final String url;
+
+    public Contact(String name, String url) {
+        Objects.requireNonNull(name, "name must be not null");
+        this.name = name;
         this.url = url;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
+    public String getName() {
+        return name;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    @Override
+    public String toString() {
+        if (url == null || url.isEmpty()) {
+            return name;
+        }
+        return name + '(' + url + ')';
     }
 
     @Override
-    public String toString() {
-        return content;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return name.equals(contact.name) &&
+                Objects.equals(url, contact.url);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, url);
     }
 }

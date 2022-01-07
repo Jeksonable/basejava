@@ -1,45 +1,48 @@
 package com.urise.webapp.model;
 
-import java.util.List;
+import com.urise.webapp.util.DateUtil;
+
+import java.time.LocalDate;
+import java.util.Objects;
 
 public class Experience {
-    private final String title;
-    private String url;
-    private List<LocalDate> content;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
+    private String title;
+    private String description;
 
-    public Experience(String title, String url, List<LocalDate> content) {
+    public Experience(LocalDate startDate, LocalDate endDate, String title, String description) {
+        Objects.requireNonNull(startDate, "startDate mst not be null");
+        Objects.requireNonNull(endDate, "endDate mst not be null");
+        Objects.requireNonNull(title, "title mst not be null");
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.title = title;
-        this.url = url;
-        this.content = content;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public List<LocalDate> getContent() {
-        return content;
-    }
-
-    public void addContent(LocalDate value) {
-        content.add(value);
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+        this.description = description;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n").append(title);
-        for (LocalDate ld : content) {
-            sb.append("\n").append(ld);
+        String date = DateUtil.format(startDate) + " - " + DateUtil.format(endDate);
+        if (description == null) {
+            return date + "\n" + title;
         }
-        return sb.toString();
+        return date + "\n" + title + "\n" + description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Experience that = (Experience) o;
+        return startDate.equals(that.startDate) &&
+                endDate.equals(that.endDate) &&
+                title.equals(that.title) &&
+                Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startDate, endDate, title, description);
     }
 }
