@@ -12,7 +12,7 @@ public class Resume {
     private final String fullName;
 
     //content
-    private Map<ContactType, Contact> contacts = new EnumMap<>(ContactType.class);
+    private Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
     private Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
 
     public Resume(String fullName) {
@@ -34,15 +34,15 @@ public class Resume {
         return fullName;
     }
 
-    public List<Contact> getContacts() {
+    public List<String> getContacts() {
         return new ArrayList<>(contacts.values());
     }
 
-    public Contact getContact(ContactType contactType) {
+    public String getContact(ContactType contactType) {
         return contacts.get(contactType);
     }
 
-    public void addContact(ContactType contactType, Contact contact) {
+    public void addContact(ContactType contactType, String contact) {
         contacts.put(contactType, contact);
     }
 

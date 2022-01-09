@@ -16,13 +16,13 @@ public class ResumeTestData {
     public static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
 
-        resume.addContact(ContactType.PHONE, new Contact("+7(921) 855-0482", null));
-        resume.addContact(ContactType.SKYPE, new Contact("grigory.kislin", "skype:grigory.kislin"));
-        resume.addContact(ContactType.MAIL, new Contact("gkislin@yandex.ru", "mailto:gkislin@yandex.ru"));
-        resume.addContact(ContactType.LINKED, new Contact("Профиль LinkedIn", "https://www.linkedin.com/in/gkislin"));
-        resume.addContact(ContactType.GITHUB, new Contact("Профиль GitHub", "https://www.github.com/gkislin"));
-        resume.addContact(ContactType.STACK, new Contact("Профиль Stackoverflow", "https://www.stackoverflow.com/users/548473"));
-        resume.addContact(ContactType.HOME, new Contact("Домашняя страница", "gkislin.ru"));
+        resume.addContact(ContactType.PHONE, "+7(921) 855-0482");
+        resume.addContact(ContactType.SKYPE, "grigory.kislin");
+        resume.addContact(ContactType.MAIL, "gkislin@yandex.ru");
+        resume.addContact(ContactType.LINKED, "www.linkedin.com/in/gkislin");
+        resume.addContact(ContactType.GITHUB, "www.github.com/gkislin");
+        resume.addContact(ContactType.STACK, "www.stackoverflow.com/users/548473");
+        resume.addContact(ContactType.HOME, "gkislin.ru");
 
         String personalDescription = "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям";
         resume.addSection(SectionType.PERSONAL, new SimpleSection(personalDescription));
@@ -158,7 +158,7 @@ public class ResumeTestData {
     private static void printResume(Resume resume) {
         System.out.println(resume.getFullName());
         System.out.println();
-        Arrays.stream(ContactType.values()).map(contactType -> contactType.toString() + resume.getContact(contactType)).forEachOrdered(System.out::println);
+        Arrays.stream(ContactType.values()).map(contactType -> contactType.toString() + ": " + resume.getContact(contactType)).forEachOrdered(System.out::println);
         Arrays.stream(SectionType.values()).map(sectionType -> sectionType.toString() + resume.getSection(sectionType)).forEachOrdered(System.out::println);
     }
 }

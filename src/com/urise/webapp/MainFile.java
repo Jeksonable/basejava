@@ -33,37 +33,23 @@ public class MainFile {
         }
 
         File root = new File(".");
-        int count = 1;
+        String indent = "";
         try {
             System.out.println(root.getCanonicalPath());
-            String[] listFiles = root.list();
-            if (listFiles != null) {
-                for (String s : listFiles) {
-                    System.out.println(s);
-                    File child = new File(s);
-                    if (child.isDirectory()) {
-                        printDirFiles(child, count);
-                    }
-                }
-            }
+            printDirFiles(root, indent);
         } catch (IOException e) {
             throw new RuntimeException("Error", e);
         }
     }
 
-    private static void printDirFiles(File dir, int count) throws IOException {
+    private static void printDirFiles(File dir, String indent) throws IOException {
         String[] listFiles = dir.list();
         if (listFiles != null) {
             for (String s : listFiles) {
-                for (int i = 0; i < count; i++) {
-                    System.out.print(TAB);
-                }
-                System.out.println(s);
+                System.out.println(indent + s);
                 File child = new File(dir.getCanonicalPath() + "/" + s);
                 if (child.isDirectory()) {
-                    count++;
-                    printDirFiles(child, count);
-                    count--;
+                    printDirFiles(child, indent + TAB);
                 }
             }
         }

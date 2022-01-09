@@ -4,16 +4,16 @@ import java.util.List;
 import java.util.Objects;
 
 public class Organization {
-    private final Contact homePage;
+    private final Link homePage;
     private List<Experience> content;
 
     public Organization(String title, String url, List<Experience> content) {
         Objects.requireNonNull(content, "content mst not be null");
-        this.homePage = new Contact(title, url);
+        this.homePage = new Link(title, url);
         this.content = content;
     }
 
-    public Contact getHomePage() {
+    public Link getHomePage() {
         return homePage;
     }
 

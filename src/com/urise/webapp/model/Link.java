@@ -2,11 +2,11 @@ package com.urise.webapp.model;
 
 import java.util.Objects;
 
-public class Contact {
+public class Link {
     private final String name;
     private final String url;
 
-    public Contact(String name, String url) {
+    public Link(String name, String url) {
         Objects.requireNonNull(name, "name must be not null");
         this.name = name;
         this.url = url;
@@ -32,9 +32,9 @@ public class Contact {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Contact contact = (Contact) o;
-        return name.equals(contact.name) &&
-                Objects.equals(url, contact.url);
+        Link link = (Link) o;
+        return name.equals(link.name) &&
+                Objects.equals(url, link.url);
     }
 
     @Override

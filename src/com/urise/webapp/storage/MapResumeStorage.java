@@ -5,7 +5,7 @@ import com.urise.webapp.model.Resume;
 import java.util.*;
 
 public class MapResumeStorage extends AbstractStorage<Resume> {
-    private Map<String, Resume> storage = new TreeMap<>();
+    private Map<String, Resume> storage = new HashMap<>();
 
     @Override
     protected Resume searchKeyOf(String uuid) {

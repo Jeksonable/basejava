@@ -5,7 +5,7 @@ import com.urise.webapp.model.Resume;
 import java.util.*;
 
 public class MapStorage extends AbstractStorage<String> {
-    private Map<String, Resume> storage = new TreeMap<>();
+    private Map<String, Resume> storage = new HashMap<>();
 
     @Override
     protected String searchKeyOf(String uuid) {
