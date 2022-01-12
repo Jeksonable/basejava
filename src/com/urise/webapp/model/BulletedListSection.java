@@ -1,11 +1,16 @@
 package com.urise.webapp.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class BulletedListSection extends AbstractSection {
     private List<String> descriptions;
+
+    public BulletedListSection(String... descriptions) {
+        this(Arrays.asList(descriptions));
+    }
 
     public BulletedListSection(List<String> descriptions) {
         Objects.requireNonNull(descriptions, "descriptions must be not null");
@@ -14,10 +19,6 @@ public class BulletedListSection extends AbstractSection {
 
     public List<String> getDescriptions() {
         return new ArrayList<>(descriptions);
-    }
-
-    public void addDescription(String description) {
-        descriptions.add(description);
     }
 
     @Override

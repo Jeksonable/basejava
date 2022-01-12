@@ -41,30 +41,30 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected void saveResume(Resume r, File file) {
         try {
             file.createNewFile();
-            writeResume(r, file);
         } catch (IOException e) {
-            throw new StorageException("Save resume is failed", r.getUuid(), e);
+            throw new StorageException("Couldn't create file " + file.getAbsolutePath(), file.getName(), e);
         }
+        updateResume(file, r);
     }
 
     protected abstract void writeResume(Resume r, File file) throws IOException;
 
     @Override
     protected Resume getResume(File file) {
-        Resume r;
         try {
-            r = readResume(file);
+            return readResume(file);
         } catch (IOException e) {
-            throw new StorageException("Get resume is failed", file.getName(), e);
+            throw new StorageException("File read error", file.getName(), e);
         }
-        return r;
     }
 
     protected abstract Resume readResume(File file) throws IOException;
 
     @Override
     protected void deleteResume(File file) {
-        file.delete();
+        if (!file.delete()) {
+            throw new StorageException("File delete error", file.getName());
+        }
     }
 
     @Override
@@ -74,38 +74,33 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> getResumeList() {
-        List<Resume> resumeList = new ArrayList<>();
-        try {
-            String[] fileNames = directory.list();
-            if (fileNames != null) {
-                for (String fileName : fileNames) {
-                    File file = new File(directory.getCanonicalPath() + "/" + fileName);
-                    resumeList.add(readResume(file));
-                }
-            }
-        } catch (Exception e) {
-            throw new StorageException("Get all resumes is failed", "", e);
+        File[] files = directory.listFiles();
+        if (files == null) {
+            throw new StorageException("Directory read error", null);
+        }
+        List<Resume> resumeList = new ArrayList<>(files.length);
+        for (File file : files) {
+            resumeList.add(getResume(file));
         }
         return resumeList;
     }
 
     @Override
     public void clear() {
-        try {
-            String[] fileNames = directory.list();
-            if (fileNames != null) {
-                for (String fileName : fileNames) {
-                    File file = new File(directory.getCanonicalPath() + "/" + fileName);
-                    file.delete();
-                }
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                deleteResume(file);
             }
-        } catch (Exception e) {
-            throw new StorageException("Clear failed", "", e);
         }
     }
 
     @Override
     public int size() {
-        return directory.list() == null ? 0 : directory.list().length;
+        String[] list = directory.list();
+        if (list == null) {
+            throw new StorageException("Directory read error", null);
+        }
+        return list.length;
     }
 }

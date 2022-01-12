@@ -34,24 +34,16 @@ public class Resume {
         return fullName;
     }
 
-    public List<String> getContacts() {
-        return new ArrayList<>(contacts.values());
-    }
-
     public String getContact(ContactType contactType) {
         return contacts.get(contactType);
     }
 
-    public void addContact(ContactType contactType, String contact) {
-        contacts.put(contactType, contact);
-    }
-
-    public List<AbstractSection> getSections() {
-        return new ArrayList<>(sections.values());
-    }
-
     public AbstractSection getSection(SectionType sectionType) {
         return sections.get(sectionType);
+    }
+
+    public void addContact(ContactType contactType, String contact) {
+        contacts.put(contactType, contact);
     }
 
     public void addSection(SectionType sectionType, AbstractSection section) {
