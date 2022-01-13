@@ -3,8 +3,7 @@ package com.urise.webapp.storage;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +13,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     protected AbstractFileStorage(File directory) {
         Objects.requireNonNull(directory, "directory must not be null");
-        if (directory.isDirectory()) {
+        if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
         }
         if (!directory.canRead() || !directory.canWrite()) {
@@ -31,7 +30,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected void updateResume(File file, Resume r) {
         try {
-            writeResume(r, file);
+            writeResume(r, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("Update resume is failed", r.getUuid(), e);
         }
@@ -47,18 +46,18 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         updateResume(file, r);
     }
 
-    protected abstract void writeResume(Resume r, File file) throws IOException;
+    protected abstract void writeResume(Resume r, OutputStream os) throws IOException;
+
+    protected abstract Resume readResume(InputStream is) throws IOException;
 
     @Override
     protected Resume getResume(File file) {
         try {
-            return readResume(file);
+            return readResume(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error", file.getName(), e);
         }
     }
-
-    protected abstract Resume readResume(File file) throws IOException;
 
     @Override
     protected void deleteResume(File file) {
