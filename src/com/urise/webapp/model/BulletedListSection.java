@@ -10,6 +10,9 @@ public class BulletedListSection extends AbstractSection {
 
     private List<String> descriptions;
 
+    public BulletedListSection() {
+    }
+
     public BulletedListSection(String... descriptions) {
         this(Arrays.asList(descriptions));
     }

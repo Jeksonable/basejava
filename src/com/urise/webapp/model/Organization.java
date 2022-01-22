@@ -1,7 +1,11 @@
 package com.urise.webapp.model;
 
 import com.urise.webapp.util.DateUtil;
+import com.urise.webapp.util.LocalDateAdapter;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
@@ -12,18 +16,22 @@ import java.util.Objects;
 import static com.urise.webapp.util.DateUtil.NOW;
 import static com.urise.webapp.util.DateUtil.of;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final Link homePage;
+    private Link homePage;
     private List<Experience> experiences;
+
+    public Organization() {
+    }
 
     public Organization(String title, String url, Experience... experiences) {
         this(new Link(title, url), Arrays.asList(experiences));
     }
 
     public Organization(Link homePage, List<Experience> experiences) {
-        Objects.requireNonNull(experiences, "experiences mst not be null");
+        Objects.requireNonNull(experiences, "experiences must not be null");
         this.homePage = homePage;
         this.experiences = experiences;
     }
@@ -60,11 +68,17 @@ public class Organization implements Serializable {
         return Objects.hash(homePage, experiences);
     }
 
+    @XmlAccessorType(XmlAccessType.FIELD)
     public static class Experience implements Serializable {
-        private final LocalDate startDate;
-        private final LocalDate endDate;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        private LocalDate startDate;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        private LocalDate endDate;
         private String title;
         private String description;
+
+        public Experience() {
+        }
 
         public Experience(int startYear, Month startMonth, String title, String description) {
             this(of(startYear, startMonth), NOW, title, description);
@@ -75,9 +89,9 @@ public class Organization implements Serializable {
         }
 
         public Experience(LocalDate startDate, LocalDate endDate, String title, String description) {
-            Objects.requireNonNull(startDate, "startDate mst not be null");
-            Objects.requireNonNull(endDate, "endDate mst not be null");
-            Objects.requireNonNull(title, "title mst not be null");
+            Objects.requireNonNull(startDate, "startDate must not be null");
+            Objects.requireNonNull(endDate, "endDate must not be null");
+            Objects.requireNonNull(title, "title must not be null");
             this.startDate = startDate;
             this.endDate = endDate;
             this.title = title;

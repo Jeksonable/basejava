@@ -7,6 +7,9 @@ public class SimpleSection extends AbstractSection {
 
     private String description;
 
+    public SimpleSection() {
+    }
+
     public SimpleSection(String description) {
         Objects.requireNonNull(description, "description must not be null");
         this.description = description;

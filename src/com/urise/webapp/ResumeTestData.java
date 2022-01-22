@@ -130,30 +130,30 @@ public class ResumeTestData {
         educationDescriptions.add(new Organization("Coursera",
                 "https://www.coursera.org/learn/progfun",
                 new Organization.Experience(2013, Month.MARCH, 2013, Month.MAY,
-                        "\"Functional Programming Principles in Scala\" by Martin Odersky", null)));
+                        "\"Functional Programming Principles in Scala\" by Martin Odersky", "")));
         educationDescriptions.add(new Organization("Luxoft",
                 "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366",
                 new Organization.Experience(2011, Month.MARCH, 2011, Month.APRIL,
-                        "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"", null)));
+                        "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"", "")));
         educationDescriptions.add(new Organization("Siemens AG",
                 "http://www.siemens.ru/",
                 new Organization.Experience(2005, Month.JANUARY, 2005, Month.APRIL,
-                        "3 месяца обучения мобильным IN сетям (Берлин)", null)));
+                        "3 месяца обучения мобильным IN сетям (Берлин)", "")));
         educationDescriptions.add(new Organization("Alcatel",
                 "http://www.alcatel.ru/",
                 new Organization.Experience(1997, Month.SEPTEMBER, 1998, Month.MARCH,
-                        "6 месяцев обучения цифровым телефонным сетям (Москва)", null)));
+                        "6 месяцев обучения цифровым телефонным сетям (Москва)", "")));
         educationDescriptions.add(new Organization("Санкт-Петербургский национальный исследовательский " +
                 "университет информационных технологий, механики и оптики",
                 "http://www.ifmo.ru/",
                 new Organization.Experience(1993, Month.SEPTEMBER, 1996, Month.JULY,
-                        "Аспирантура (программист С, С++)", null),
+                        "Аспирантура (программист С, С++)", ""),
                 new Organization.Experience(1987, Month.SEPTEMBER, 1993, Month.JULY,
-                        "Инженер (программист Fortran, C)", null)));
+                        "Инженер (программист Fortran, C)", "")));
         educationDescriptions.add(new Organization("Заочная физико-техническая школа при МФТИ",
                 "http://www.school.mipt.ru/",
                 new Organization.Experience(1984, Month.SEPTEMBER, 1987, Month.JUNE,
-                        "Закончил с отличием", null)));
+                        "Закончил с отличием", "")));
         resume.addSection(SectionType.EDUCATION, new OrganizationListSection(educationDescriptions));
 
         return resume;

@@ -9,6 +9,9 @@ public class OrganizationListSection extends AbstractSection {
 
     private List<Organization> organizations;
 
+    public OrganizationListSection() {
+    }
+
     public OrganizationListSection(List<Organization> organizations) {
         Objects.requireNonNull(organizations, "organizations must be not null");
         this.organizations = organizations;
@@ -18,7 +21,7 @@ public class OrganizationListSection extends AbstractSection {
         return new ArrayList<>(organizations);
     }
 
-    public void addExperience(Organization organization) {
+    public void addOrganization(Organization organization) {
         organizations.add(organization);
     }
 
