@@ -1,12 +1,13 @@
 package com.urise.webapp.storage.strategy;
 
 import com.urise.webapp.model.*;
+import com.urise.webapp.util.DataReadConsumer;
+import com.urise.webapp.util.DataWriteConsumer;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class DataStreamStrategy implements Strategy {
     @Override
@@ -14,51 +15,40 @@ public class DataStreamStrategy implements Strategy {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(r.getUuid());
             dos.writeUTF(r.getFullName());
-            Map<ContactType, String> contacts = r.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue());
-            }
-            Map<SectionType, AbstractSection> sections = r.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                switch (entry.getKey()) {
+            writeWithException(r.getContacts().entrySet(), dos, contact -> {
+                dos.writeUTF(contact.getKey().name());
+                dos.writeUTF(contact.getValue());
+            });
+            writeWithException(r.getSections().entrySet(), dos, section -> {
+                SectionType st = section.getKey();
+                dos.writeUTF(st.name());
+                switch (st) {
                     case PERSONAL:
                     case OBJECTIVE:
-                        SimpleSection section = (SimpleSection) entry.getValue();
-                        dos.writeUTF(section.getDescription());
+                        SimpleSection ss = (SimpleSection) section.getValue();
+                        dos.writeUTF(ss.getDescription());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        BulletedListSection bls = (BulletedListSection) entry.getValue();
-                        List<String> descriptions = bls.getDescriptions();
-                        dos.writeInt(descriptions.size());
-                        for (String description : descriptions) {
-                            dos.writeUTF(description);
-                        }
+                        BulletedListSection bls = (BulletedListSection) section.getValue();
+                        writeWithException(bls.getDescriptions(), dos, dos::writeUTF);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        OrganizationListSection ols = (OrganizationListSection) entry.getValue();
-                        List<Organization> organizations = ols.getOrganizations();
-                        dos.writeInt(organizations.size());
-                        for (Organization organization : organizations) {
+                        OrganizationListSection ols = (OrganizationListSection) section.getValue();
+                        writeWithException(ols.getOrganizations(), dos, organization -> {
                             Link link = organization.getHomePage();
                             dos.writeUTF(link.getName());
-                            dos.writeUTF(link.getUrl());
-                            List<Organization.Experience> experiences = organization.getExperiences();
-                            dos.writeInt(experiences.size());
-                            for (Organization.Experience experience : experiences) {
-                                dos.writeUTF(experience.getStartDate().toString());
-                                dos.writeUTF(experience.getEndDate().toString());
+                            dos.writeUTF(writeOptionalParam(link.getUrl()));
+                            writeWithException(organization.getExperiences(), dos, experience -> {
+                                dos.writeUTF(getString(experience.getStartDate()));
+                                dos.writeUTF(getString(experience.getEndDate()));
                                 dos.writeUTF(experience.getTitle());
-                                dos.writeUTF(experience.getDescription());
-                            }
-                        }
+                                dos.writeUTF(writeOptionalParam(experience.getDescription()));
+                            });
+                        });
                 }
-            }
+            });
         }
     }
 
@@ -66,12 +56,8 @@ public class DataStreamStrategy implements Strategy {
     public Resume readResume(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
             Resume resume = new Resume(dis.readUTF(), dis.readUTF());
-            int sizeContacts = dis.readInt();
-            for (int i = 0; i < sizeContacts; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
-            int sizeSections = dis.readInt();
-            for (int i = 0; i < sizeSections; i++) {
+            readWithException(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
+            readWithException(dis, () -> {
                 SectionType st = SectionType.valueOf(dis.readUTF());
                 switch (st) {
                     case PERSONAL:
@@ -81,31 +67,60 @@ public class DataStreamStrategy implements Strategy {
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
                         List<String> descriptions = new ArrayList<>();
-                        int sizeDescriptions = dis.readInt();
-                        for (int j = 0; j < sizeDescriptions; j++) {
-                            descriptions.add(dis.readUTF());
-                        }
+                        readWithException(dis, () -> descriptions.add(dis.readUTF()));
                         resume.addSection(st, new BulletedListSection(descriptions));
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
                         List<Organization> organizations = new ArrayList<>();
-                        int sizeOrganizations = dis.readInt();
-                        for (int j = 0; j < sizeOrganizations; j++) {
-                            Link link = new Link(dis.readUTF(), dis.readUTF());
+                        readWithException(dis, () -> {
+                            Link link = new Link(dis.readUTF(), readOptionalParam(dis.readUTF()));
                             List<Organization.Experience> experiences = new ArrayList<>();
-                            int sizeExperiences = dis.readInt();
-                            for (int k = 0; k < sizeExperiences; k++) {
-                                experiences.add(
-                                        new Organization.Experience(LocalDate.parse(dis.readUTF()),
-                                                LocalDate.parse(dis.readUTF()), dis.readUTF(), dis.readUTF()));
-                            }
+                            readWithException(dis, () -> experiences.add(
+                                    new Organization.Experience(getLocalDate(dis.readUTF()),
+                                            getLocalDate(dis.readUTF()),
+                                            dis.readUTF(), readOptionalParam(dis.readUTF()))));
                             organizations.add(new Organization(link, experiences));
-                        }
+                        });
                         resume.addSection(st, new OrganizationListSection(organizations));
                 }
-            }
+            });
             return resume;
+        }
+    }
+
+    private String getString(LocalDate ld) {
+        return ld.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    private LocalDate getLocalDate(String date) {
+        return LocalDate.parse(date);
+    }
+
+    private String writeOptionalParam(String param) {
+        return param == null ? "null" : param;
+    }
+
+    private String readOptionalParam(String param) {
+        return param.equals("null") ? null : param;
+    }
+
+    private <T> void writeWithException(Collection<T> collection, DataOutputStream dos, DataWriteConsumer<T> action) throws IOException {
+        Objects.requireNonNull(collection);
+        Objects.requireNonNull(dos);
+        Objects.requireNonNull(action);
+        dos.writeInt(collection.size());
+        for (T t : collection) {
+            action.write(t);
+        }
+    }
+
+    private void readWithException(DataInputStream dis, DataReadConsumer action) throws IOException {
+        Objects.requireNonNull(dis);
+        Objects.requireNonNull(action);
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            action.read();
         }
     }
 }
