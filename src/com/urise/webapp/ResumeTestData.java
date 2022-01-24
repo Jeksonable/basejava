@@ -86,7 +86,7 @@ public class ResumeTestData {
                         "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, " +
                                 "Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, " +
                                 "авторизация по OAuth1, OAuth2, JWT SSO.")));
-        organizationDescriptions.add(new Organization("RIT Center", "",
+        organizationDescriptions.add(new Organization("RIT Center", null,
                 new Organization.Experience(2012, Month.APRIL, 2014, Month.OCTOBER,
                         "Java архитектор",
                         "Организация процесса разработки системы ERP для разных окружений: релизная политика, " +
@@ -147,13 +147,13 @@ public class ResumeTestData {
                 "университет информационных технологий, механики и оптики",
                 "http://www.ifmo.ru/",
                 new Organization.Experience(1993, Month.SEPTEMBER, 1996, Month.JULY,
-                        "Аспирантура (программист С, С++)", ""),
+                        "Аспирантура (программист С, С++)", null),
                 new Organization.Experience(1987, Month.SEPTEMBER, 1993, Month.JULY,
-                        "Инженер (программист Fortran, C)", "")));
+                        "Инженер (программист Fortran, C)", null)));
         educationDescriptions.add(new Organization("Заочная физико-техническая школа при МФТИ",
                 "http://www.school.mipt.ru/",
                 new Organization.Experience(1984, Month.SEPTEMBER, 1987, Month.JUNE,
-                        "Закончил с отличием", "")));
+                        "Закончил с отличием", null)));
         resume.addSection(SectionType.EDUCATION, new OrganizationListSection(educationDescriptions));
 
         return resume;

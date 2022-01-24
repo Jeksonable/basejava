@@ -106,9 +106,6 @@ public class DataStreamStrategy implements Strategy {
     }
 
     private <T> void writeWithException(Collection<T> collection, DataOutputStream dos, DataWriteConsumer<T> action) throws IOException {
-        Objects.requireNonNull(collection);
-        Objects.requireNonNull(dos);
-        Objects.requireNonNull(action);
         dos.writeInt(collection.size());
         for (T t : collection) {
             action.write(t);
@@ -116,8 +113,6 @@ public class DataStreamStrategy implements Strategy {
     }
 
     private void readWithException(DataInputStream dis, DataReadConsumer action) throws IOException {
-        Objects.requireNonNull(dis);
-        Objects.requireNonNull(action);
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
             action.read();
