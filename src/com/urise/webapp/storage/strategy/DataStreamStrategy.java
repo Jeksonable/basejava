@@ -1,8 +1,6 @@
 package com.urise.webapp.storage.strategy;
 
 import com.urise.webapp.model.*;
-import com.urise.webapp.util.DataReadConsumer;
-import com.urise.webapp.util.DataWriteConsumer;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -39,12 +37,12 @@ public class DataStreamStrategy implements Strategy {
                         writeWithException(ols.getOrganizations(), dos, organization -> {
                             Link link = organization.getHomePage();
                             dos.writeUTF(link.getName());
-                            dos.writeUTF(writeOptionalParam(link.getUrl()));
+                            dos.writeUTF(link.getUrl());
                             writeWithException(organization.getExperiences(), dos, experience -> {
                                 dos.writeUTF(getString(experience.getStartDate()));
                                 dos.writeUTF(getString(experience.getEndDate()));
                                 dos.writeUTF(experience.getTitle());
-                                dos.writeUTF(writeOptionalParam(experience.getDescription()));
+                                dos.writeUTF(experience.getDescription());
                             });
                         });
                 }
@@ -74,12 +72,11 @@ public class DataStreamStrategy implements Strategy {
                     case EDUCATION:
                         List<Organization> organizations = new ArrayList<>();
                         readWithException(dis, () -> {
-                            Link link = new Link(dis.readUTF(), readOptionalParam(dis.readUTF()));
+                            Link link = new Link(dis.readUTF(), dis.readUTF());
                             List<Organization.Experience> experiences = new ArrayList<>();
                             readWithException(dis, () -> experiences.add(
                                     new Organization.Experience(getLocalDate(dis.readUTF()),
-                                            getLocalDate(dis.readUTF()),
-                                            dis.readUTF(), readOptionalParam(dis.readUTF()))));
+                                            getLocalDate(dis.readUTF()), dis.readUTF(), dis.readUTF())));
                             organizations.add(new Organization(link, experiences));
                         });
                         resume.addSection(st, new OrganizationListSection(organizations));
@@ -97,14 +94,6 @@ public class DataStreamStrategy implements Strategy {
         return LocalDate.parse(date);
     }
 
-    private String writeOptionalParam(String param) {
-        return param == null ? "null" : param;
-    }
-
-    private String readOptionalParam(String param) {
-        return param.equals("null") ? null : param;
-    }
-
     private <T> void writeWithException(Collection<T> collection, DataOutputStream dos, DataWriteConsumer<T> action) throws IOException {
         dos.writeInt(collection.size());
         for (T t : collection) {
@@ -117,5 +106,15 @@ public class DataStreamStrategy implements Strategy {
         for (int i = 0; i < size; i++) {
             action.read();
         }
+    }
+
+    @FunctionalInterface
+    public interface DataWriteConsumer<T> {
+        void write(T t) throws IOException;
+    }
+
+    @FunctionalInterface
+    public interface DataReadConsumer {
+        void read() throws IOException;
     }
 }

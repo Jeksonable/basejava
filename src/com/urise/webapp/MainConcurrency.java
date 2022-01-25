@@ -3,14 +3,10 @@ package com.urise.webapp;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Thread.sleep;
-
 public class MainConcurrency {
     private static final int THREADS_NUMBER = 10000;
     private static int counter;
     private static final Object LOCK = new Object();
-    private static final String DEADLOCK_1 = "DEADLOCK_1";
-    private static final String DEADLOCK_2 = "DEADLOCK_2";
 
     public static void main(String[] args) throws InterruptedException {
         System.out.println(Thread.currentThread().getName());
@@ -51,40 +47,6 @@ public class MainConcurrency {
 
 //        Thread.sleep(500);
         System.out.println(counter);
-
-        Thread thread_1 = new Thread(() -> {
-            try {
-                synchronized (DEADLOCK_1) {
-                    System.out.println("Доступ к объекту №1: " + DEADLOCK_1);
-                    sleep(10);
-                    synchronized (DEADLOCK_2) {
-                        System.out.println("Доступ к объекту №2: " + DEADLOCK_2);
-                    }
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-
-        Thread thread_2 = new Thread(() -> {
-            try {
-                synchronized (DEADLOCK_2) {
-                    System.out.println("Доступ к объекту №1: " + DEADLOCK_2);
-                    sleep(10);
-                    synchronized (DEADLOCK_1) {
-                        System.out.println("Доступ к объекту №2: " + DEADLOCK_1);
-                    }
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-
-        thread_1.start();
-        thread_2.start();
-        sleep(100);
-        System.out.println(thread_1.getState());
-        System.out.println(thread_2.getState());
     }
 
     private synchronized void inc() {
