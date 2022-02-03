@@ -38,6 +38,6 @@ public class MainStream {
 //        return integers.stream().filter(i -> i % 2 != 0).collect(Collectors.toList());
         Map<Boolean, List<Integer>> map = integers.stream()
                 .collect(Collectors.partitioningBy(i -> i % 2 == 0));
-        return map.get(map.get(false).size() % 2 == 0);
+        return map.get(map.get(false).size() % 2 != 0);
     }
 }
