@@ -1,4 +1,4 @@
-package com.urise.webapp.util;
+package com.urise.webapp;
 
 public class LazySingleton {
     volatile private static LazySingleton INSTANCE;

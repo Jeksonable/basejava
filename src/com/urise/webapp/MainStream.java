@@ -19,11 +19,6 @@ public class MainStream {
     }
 
     private static int minValue(int[] values) {
-//        return Integer.parseInt(Arrays.stream(values)
-//                .distinct()
-//                .sorted()
-//                .mapToObj(String::valueOf)
-//                .collect(Collectors.joining()));
         return Arrays.stream(values)
                 .distinct()
                 .sorted()
@@ -31,11 +26,6 @@ public class MainStream {
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
-//        int sum = integers.stream().mapToInt(Integer::intValue).sum();
-//        if (sum % 2 == 0) {
-//            return integers.stream().filter(i -> i % 2 == 0).collect(Collectors.toList());
-//        }
-//        return integers.stream().filter(i -> i % 2 != 0).collect(Collectors.toList());
         Map<Boolean, List<Integer>> map = integers.stream()
                 .collect(Collectors.partitioningBy(i -> i % 2 == 0));
         return map.get(map.get(false).size() % 2 != 0);
