@@ -19,7 +19,7 @@ public class SqlHelper {
              PreparedStatement ps = conn.prepareStatement(command)) {
             return handler.handle(ps);
         } catch (SQLException e) {
-            throw new StorageException(e);
+            throw checkSqlException(e);
         }
     }
 
@@ -27,11 +27,10 @@ public class SqlHelper {
         T handle(PreparedStatement ps) throws SQLException;
     }
 
-    public void checkSqlException(SQLException e, String uuid) throws StorageException {
-        String existMessage = "ОШИБКА: повторяющееся значение ключа нарушает ограничение уникальности \"resume_pkey\"\n";
-        if (e.getMessage().startsWith(existMessage)) {
-            throw new ExistStorageException(uuid);
+    private StorageException checkSqlException(SQLException e) {
+        if (e.getSQLState().equals("23505")) {
+            return new ExistStorageException(e);
         }
-        throw new StorageException(e);
+        return new StorageException(e);
     }
 }

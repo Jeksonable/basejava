@@ -6,7 +6,6 @@ import com.urise.webapp.sql.SqlHelper;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -15,8 +14,6 @@ import java.util.logging.Logger;
 public class SqlStorage implements Storage {
 
     private static final Logger LOG = Logger.getLogger(SqlStorage.class.getName());
-    private static final Comparator<Resume> RESUME_NAME_COMPARATOR = Comparator.comparing(Resume::getFullName)
-            .thenComparing(Resume::getUuid);
     private final SqlHelper sqlHelper;
 
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
@@ -50,11 +47,7 @@ public class SqlStorage implements Storage {
             String uuid = r.getUuid();
             ps.setString(1, uuid);
             ps.setString(2, r.getFullName());
-            try {
-                ps.execute();
-            } catch (SQLException e) {
-                sqlHelper.checkSqlException(e, uuid);
-            }
+            ps.execute();
             return null;
         });
     }
@@ -89,7 +82,8 @@ public class SqlStorage implements Storage {
             while (rs.next()) {
                 resumes.add(new Resume(rs.getString("uuid"), rs.getString("full_name")));
             }
-            resumes.sort(RESUME_NAME_COMPARATOR);
+            resumes.sort(Comparator.comparing(Resume::getFullName)
+                    .thenComparing(Resume::getUuid));
             return resumes;
         });
     }
