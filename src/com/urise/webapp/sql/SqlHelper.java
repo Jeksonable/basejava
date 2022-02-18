@@ -23,8 +23,28 @@ public class SqlHelper {
         }
     }
 
+    public <T> T transactionalConnect(TransactionHandler<T> handler) {
+        try (Connection conn = connectionFactory.getConnection()) {
+            try {
+                conn.setAutoCommit(false);
+                T res = handler.handle(conn);
+                conn.commit();
+                return res;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw checkSqlException(e);
+            }
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+    }
+
     public interface Handler<T> {
         T handle(PreparedStatement ps) throws SQLException;
+    }
+
+    public interface TransactionHandler<T> {
+        T handle(Connection conn) throws SQLException;
     }
 
     private StorageException checkSqlException(SQLException e) {

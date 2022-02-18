@@ -15,13 +15,13 @@ public class ResumeTestData {
     public static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
 
-//        resume.addContact(ContactType.PHONE, "+7(921) 855-0482");
-//        resume.addContact(ContactType.SKYPE, "grigory.kislin");
-//        resume.addContact(ContactType.MAIL, "gkislin@yandex.ru");
-//        resume.addContact(ContactType.LINKED, "www.linkedin.com/in/gkislin");
-//        resume.addContact(ContactType.GITHUB, "www.github.com/gkislin");
-//        resume.addContact(ContactType.STACK, "www.stackoverflow.com/users/548473");
-//        resume.addContact(ContactType.HOME, "gkislin.ru");
+        resume.addContact(ContactType.PHONE, "+7(921) 855-0482");
+        resume.addContact(ContactType.SKYPE, "grigory.kislin");
+        resume.addContact(ContactType.MAIL, "gkislin@yandex.ru");
+        resume.addContact(ContactType.LINKED, "www.linkedin.com/in/gkislin");
+        resume.addContact(ContactType.GITHUB, "www.github.com/gkislin");
+        resume.addContact(ContactType.STACK, "www.stackoverflow.com/users/548473");
+        resume.addContact(ContactType.HOME, "gkislin.ru");
 
 //        String personalDescription = "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям";
 //        resume.addSection(SectionType.PERSONAL, new SimpleSection(personalDescription));
