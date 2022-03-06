@@ -1,8 +1,7 @@
 package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.model.ContactType;
-import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.*;
 import com.urise.webapp.sql.SqlHelper;
 
 import java.sql.*;
@@ -15,7 +14,14 @@ public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
 
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
-        sqlHelper = new SqlHelper(() -> DriverManager.getConnection(dbUrl, dbUser, dbPassword));
+        sqlHelper = new SqlHelper(() -> {
+            try {
+                Class.forName("org.postgresql.Driver");
+            } catch (ClassNotFoundException e) {
+                System.err.println("PostgreSQL DataSource unable to load PostgreSQL JDBC Driver");
+            }
+            return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+        });
     }
 
     @Override
@@ -41,12 +47,9 @@ public class SqlStorage implements Storage {
                         ps.setString(2, uuid);
                         checkExist(ps.executeUpdate() == 0, uuid);
                     });
-            executeCommand(conn, "DELETE FROM contact WHERE resume_uuid =?",
-                    ps -> {
-                        ps.setString(1, uuid);
-                        ps.execute();
-                    });
+            deleteContent(conn, uuid);
             insertContacts(conn, r);
+            insertSections(conn, r);
             return null;
         });
     }
@@ -62,6 +65,7 @@ public class SqlStorage implements Storage {
                         ps.execute();
                     });
             insertContacts(conn, r);
+            insertSections(conn, r);
             return null;
         });
     }
@@ -72,6 +76,8 @@ public class SqlStorage implements Storage {
                         "   SELECT * FROM resume r " +
                         "LEFT JOIN contact c " +
                         "       ON r.uuid = c.resume_uuid " +
+                        "LEFT JOIN section s " +
+                        "       ON r.uuid = s.resume_uuid " +
                         "    WHERE r.uuid =? ",
                 ps -> {
                     LOG.info("Get " + uuid);
@@ -80,7 +86,8 @@ public class SqlStorage implements Storage {
                     checkExist(!rs.next(), uuid);
                     Resume r = new Resume(uuid, rs.getString("full_name"));
                     do {
-                        addContact(r, rs);
+                        addContent(r, rs, true);
+                        addContent(r, rs, false);
                     } while (rs.next());
                     return r;
                 });
@@ -107,8 +114,8 @@ public class SqlStorage implements Storage {
                         String uuid = rs.getString("uuid");
                         resumes.put(uuid, new Resume(uuid, rs.getString("full_name")));
                     });
-            cycleOperation(conn, "SELECT * FROM contact",
-                    rs -> addContact(resumes.get(rs.getString("resume_uuid")), rs));
+            addAllContent(conn, resumes, true);
+            addAllContent(conn, resumes, false);
             return new ArrayList<>(resumes.values());
         });
     }
@@ -119,19 +126,6 @@ public class SqlStorage implements Storage {
                 ps -> {
                     ResultSet rs = ps.executeQuery();
                     return rs.next() ? rs.getInt(1) : 0;
-                });
-    }
-
-    private void insertContacts(Connection conn, Resume r) throws SQLException {
-        executeCommand(conn, "INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)",
-                ps -> {
-                    for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
-                        ps.setString(1, r.getUuid());
-                        ps.setString(2, e.getKey().name());
-                        ps.setString(3, e.getValue());
-                        ps.addBatch();
-                    }
-                    ps.executeBatch();
                 });
     }
 
@@ -156,12 +150,88 @@ public class SqlStorage implements Storage {
         });
     }
 
-    private void addContact(Resume r, ResultSet rs) throws SQLException {
-        String value = rs.getString("value");
-        if (value != null && !value.isEmpty()) {
-            ContactType type = ContactType.valueOf(rs.getString("type"));
-            r.addContact(type, value);
+    private void deleteContent(Connection conn, String uuid) throws SQLException {
+        for (String contentType : new String[]{"contact", "section"}) {
+            executeCommand(conn, "DELETE FROM " + contentType + " WHERE resume_uuid =?",
+                    ps -> {
+                        ps.setString(1, uuid);
+                        ps.execute();
+                    });
         }
+    }
+
+    private void insertContacts(Connection conn, Resume r) throws SQLException {
+        executeCommand(conn, "INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)",
+                ps -> {
+                    for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
+                        setValues(ps, r, e.getKey().name(), e.getValue());
+                    }
+                    ps.executeBatch();
+                });
+    }
+
+    private void insertSections(Connection conn, Resume r) throws SQLException {
+        executeCommand(conn, "INSERT INTO section (resume_uuid, section_type, section_value) VALUES (?,?,?)",
+                ps -> {
+                    for (Map.Entry<SectionType, AbstractSection> e : r.getSections().entrySet()) {
+                        SectionType type = e.getKey();
+                        String description = "";
+                        AbstractSection section = e.getValue();
+                        switch (type) {
+                            case PERSONAL:
+                            case OBJECTIVE:
+                                description = ((SimpleSection) section).getDescription();
+                                break;
+                            case ACHIEVEMENT:
+                            case QUALIFICATIONS:
+                                description = ((BulletedListSection) section).getDescriptions()
+                                        .stream()
+                                        .reduce(description, (str, des) -> str + des + "\n");
+                                break;
+                            case EDUCATION:
+                            case EXPERIENCE:
+                        }
+                        setValues(ps, r, type.name(), description);
+                    }
+                    ps.executeBatch();
+                });
+    }
+
+    private void setValues(PreparedStatement ps, Resume r, String type, String description) throws SQLException {
+        ps.setString(1, r.getUuid());
+        ps.setString(2, type);
+        ps.setString(3, description);
+        ps.addBatch();
+    }
+
+    private void addContent(Resume r, ResultSet rs, boolean isContact) throws SQLException {
+        String value = rs.getString(isContact ? "value" : "section_value");
+        if (value != null && !value.isEmpty()) {
+            if (isContact) {
+                ContactType type = ContactType.valueOf(rs.getString("type"));
+                r.addContact(type, value);
+            } else {
+                SectionType type = SectionType.valueOf(rs.getString("section_type"));
+                switch (type) {
+                    case PERSONAL:
+                    case OBJECTIVE:
+                        r.addSection(type, new SimpleSection(value));
+                        break;
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        r.addSection(type, new BulletedListSection(value.split("\n")));
+                        break;
+                    case EDUCATION:
+                    case EXPERIENCE:
+                }
+            }
+        }
+    }
+
+    private void addAllContent(Connection conn, Map<String, Resume> resumes, boolean isContact) throws SQLException {
+        String contentType = isContact ? "contact" : "section";
+        cycleOperation(conn, "SELECT * FROM " + contentType,
+                rs -> addContent(resumes.get(rs.getString("resume_uuid")), rs, isContact));
     }
 
     private interface StatementExecutor {

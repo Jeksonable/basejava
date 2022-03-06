@@ -1,10 +1,10 @@
 package com.urise.webapp;
 
-import com.urise.webapp.model.ContactType;
-import com.urise.webapp.model.Resume;
-import com.urise.webapp.model.SectionType;
+import com.urise.webapp.model.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ResumeTestData {
     public static void main(String[] args) {
@@ -23,58 +23,58 @@ public class ResumeTestData {
         resume.addContact(ContactType.STACK, "www.stackoverflow.com/users/548473");
         resume.addContact(ContactType.HOME, "gkislin.ru");
 
-//        String personalDescription = "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям";
-//        resume.addSection(SectionType.PERSONAL, new SimpleSection(personalDescription));
-//
-//        String objectiveDescription = "Аналитический склад ума, сильная логика, креативность, инициативность. " +
-//                "Пурист кода и архитектуры.";
-//        resume.addSection(SectionType.OBJECTIVE, new SimpleSection(objectiveDescription));
-//
-//        List<String> achievementDescriptions = new ArrayList<>();
-//        achievementDescriptions.add("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", " +
-//                "\"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP). " +
-//                "Удаленное взаимодействие (JMS/AKKA)\". Организация онлайн стажировок и ведение проектов. " +
-//                "Более 1000 выпускников.");
-//        achievementDescriptions.add("Реализация двухфакторной аутентификации для онлайн платформы управления " +
-//                "проектами Wrike. Интеграция с Twilio, DuoSecurity, Google Authenticator, Jira, Zendesk.");
-//        achievementDescriptions.add("Налаживание процесса разработки и непрерывной интеграции ERP системы River BPM. " +
-//                "Интеграция с 1С, Bonita BPM, CMIS, LDAP. Разработка приложения управления окружением на стеке: " +
-//                "Scala/Play/Anorm/JQuery. Разработка SSO аутентификации и авторизации различных ERP модулей, " +
-//                "интеграция CIFS/SMB java сервера.");
-//        achievementDescriptions.add("Реализация c нуля Rich Internet Application приложения на стеке технологий JPA, " +
-//                "Spring, Spring-MVC, GWT, ExtGWT (GXT), Commet, HTML5, Highstock для алгоритмического трейдинга.");
-//        achievementDescriptions.add("Создание JavaEE фреймворка для отказоустойчивого взаимодействия слабо-связанных " +
-//                "сервисов (SOA-base архитектура, JAX-WS, JMS, AS Glassfish). Сбор статистики сервисов и информации " +
-//                "о состоянии через систему мониторинга Nagios. Реализация онлайн клиента для администрирования и " +
-//                "мониторинга системы по JMX (Jython/ Django).");
-//        achievementDescriptions.add("Реализация протоколов по приему платежей всех основных платежных системы России " +
-//                "(Cyberplat, Eport, Chronopay, Сбербанк), Белоруcсии(Erip, Osmp) и Никарагуа.");
-//        resume.addSection(SectionType.ACHIEVEMENT, new BulletedListSection(achievementDescriptions));
-//
-//        List<String> qualificationDescriptions = new ArrayList<>();
-//        qualificationDescriptions.add("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
-//        qualificationDescriptions.add("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
-//        qualificationDescriptions.add("DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle,");
-//        qualificationDescriptions.add("MySQL, SQLite, MS SQL, HSQLDB");
-//        qualificationDescriptions.add("Languages: Java, Scala, Python/Jython/PL-Python, JavaScript, Groovy,");
-//        qualificationDescriptions.add("XML/XSD/XSLT, SQL, C/C++, Unix shell scripts,");
-//        qualificationDescriptions.add("Java Frameworks: Java 8 (Time API, Streams), Guava, Java Executor, MyBatis, " +
-//                "Spring (MVC, Security, Data, Clouds, Boot), JPA (Hibernate, EclipseLink), Guice, GWT(SmartGWT, ExtGWT/GXT), " +
-//                "Vaadin, Jasperreports, Apache Commons, Eclipse SWT, JUnit, Selenium (htmlelements).");
-//        qualificationDescriptions.add("Python: Django.");
-//        qualificationDescriptions.add("JavaScript: jQuery, ExtJS, Bootstrap.js, underscore.js");
-//        qualificationDescriptions.add("Scala: SBT, Play2, Specs2, Anorm, Spray, Akka");
-//        qualificationDescriptions.add("Технологии: Servlet, JSP/JSTL, JAX-WS, REST, EJB, RMI, JMS, JavaMail, JAXB, " +
-//                "StAX, SAX, DOM, XSLT, MDB, JMX, JDBC, JPA, JNDI, JAAS, SOAP, AJAX, Commet, HTML5, ESB, CMIS, BPMN2, " +
-//                "LDAP, OAuth1, OAuth2, JWT.");
-//        qualificationDescriptions.add("Инструменты: Maven + plugin development, Gradle, настройка Ngnix,");
-//        qualificationDescriptions.add("администрирование Hudson/Jenkins, Ant + custom task, SoapUI, JPublisher, " +
-//                "Flyway, Nagios, iReport, OpenCmis, Bonita, pgBouncer.");
-//        qualificationDescriptions.add("Отличное знание и опыт применения концепций ООП, SOA, шаблонов проектрирования, " +
-//                "архитектурных шаблонов, UML, функционального программирования");
-//        qualificationDescriptions.add("Родной русский, английский \"upper intermediate\"");
-//        resume.addSection(SectionType.QUALIFICATIONS, new BulletedListSection(qualificationDescriptions));
-//
+        String personalDescription = "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям";
+        resume.addSection(SectionType.PERSONAL, new SimpleSection(personalDescription));
+
+        String objectiveDescription = "Аналитический склад ума, сильная логика, креативность, инициативность. " +
+                "Пурист кода и архитектуры.";
+        resume.addSection(SectionType.OBJECTIVE, new SimpleSection(objectiveDescription));
+
+        List<String> achievementDescriptions = new ArrayList<>();
+        achievementDescriptions.add("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", " +
+                "\"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP). " +
+                "Удаленное взаимодействие (JMS/AKKA)\". Организация онлайн стажировок и ведение проектов. " +
+                "Более 1000 выпускников.");
+        achievementDescriptions.add("Реализация двухфакторной аутентификации для онлайн платформы управления " +
+                "проектами Wrike. Интеграция с Twilio, DuoSecurity, Google Authenticator, Jira, Zendesk.");
+        achievementDescriptions.add("Налаживание процесса разработки и непрерывной интеграции ERP системы River BPM. " +
+                "Интеграция с 1С, Bonita BPM, CMIS, LDAP. Разработка приложения управления окружением на стеке: " +
+                "Scala/Play/Anorm/JQuery. Разработка SSO аутентификации и авторизации различных ERP модулей, " +
+                "интеграция CIFS/SMB java сервера.");
+        achievementDescriptions.add("Реализация c нуля Rich Internet Application приложения на стеке технологий JPA, " +
+                "Spring, Spring-MVC, GWT, ExtGWT (GXT), Commet, HTML5, Highstock для алгоритмического трейдинга.");
+        achievementDescriptions.add("Создание JavaEE фреймворка для отказоустойчивого взаимодействия слабо-связанных " +
+                "сервисов (SOA-base архитектура, JAX-WS, JMS, AS Glassfish). Сбор статистики сервисов и информации " +
+                "о состоянии через систему мониторинга Nagios. Реализация онлайн клиента для администрирования и " +
+                "мониторинга системы по JMX (Jython/ Django).");
+        achievementDescriptions.add("Реализация протоколов по приему платежей всех основных платежных системы России " +
+                "(Cyberplat, Eport, Chronopay, Сбербанк), Белоруcсии(Erip, Osmp) и Никарагуа.");
+        resume.addSection(SectionType.ACHIEVEMENT, new BulletedListSection(achievementDescriptions));
+
+        List<String> qualificationDescriptions = new ArrayList<>();
+        qualificationDescriptions.add("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
+        qualificationDescriptions.add("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
+        qualificationDescriptions.add("DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle,");
+        qualificationDescriptions.add("MySQL, SQLite, MS SQL, HSQLDB");
+        qualificationDescriptions.add("Languages: Java, Scala, Python/Jython/PL-Python, JavaScript, Groovy,");
+        qualificationDescriptions.add("XML/XSD/XSLT, SQL, C/C++, Unix shell scripts,");
+        qualificationDescriptions.add("Java Frameworks: Java 8 (Time API, Streams), Guava, Java Executor, MyBatis, " +
+                "Spring (MVC, Security, Data, Clouds, Boot), JPA (Hibernate, EclipseLink), Guice, GWT(SmartGWT, ExtGWT/GXT), " +
+                "Vaadin, Jasperreports, Apache Commons, Eclipse SWT, JUnit, Selenium (htmlelements).");
+        qualificationDescriptions.add("Python: Django.");
+        qualificationDescriptions.add("JavaScript: jQuery, ExtJS, Bootstrap.js, underscore.js");
+        qualificationDescriptions.add("Scala: SBT, Play2, Specs2, Anorm, Spray, Akka");
+        qualificationDescriptions.add("Технологии: Servlet, JSP/JSTL, JAX-WS, REST, EJB, RMI, JMS, JavaMail, JAXB, " +
+                "StAX, SAX, DOM, XSLT, MDB, JMX, JDBC, JPA, JNDI, JAAS, SOAP, AJAX, Commet, HTML5, ESB, CMIS, BPMN2, " +
+                "LDAP, OAuth1, OAuth2, JWT.");
+        qualificationDescriptions.add("Инструменты: Maven + plugin development, Gradle, настройка Ngnix,");
+        qualificationDescriptions.add("администрирование Hudson/Jenkins, Ant + custom task, SoapUI, JPublisher, " +
+                "Flyway, Nagios, iReport, OpenCmis, Bonita, pgBouncer.");
+        qualificationDescriptions.add("Отличное знание и опыт применения концепций ООП, SOA, шаблонов проектрирования, " +
+                "архитектурных шаблонов, UML, функционального программирования");
+        qualificationDescriptions.add("Родной русский, английский \"upper intermediate\"");
+        resume.addSection(SectionType.QUALIFICATIONS, new BulletedListSection(qualificationDescriptions));
+
 //        List<Organization> organizationDescriptions = new ArrayList<>();
 //        organizationDescriptions.add(new Organization("Java Online Projects", "javaops.ru",
 //                new Organization.Experience(2013, Month.OCTOBER, "Автор проекта.",
