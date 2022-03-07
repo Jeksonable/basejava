@@ -11,6 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ResumeServlet extends HttpServlet {
+
+    private Storage storage;
+
+    @Override
+    public void init() {
+        storage = Config.get().getSqlStorage();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -19,7 +27,6 @@ public class ResumeServlet extends HttpServlet {
 //        response.setHeader("Content-Type", "text/html; charset=UTF-8");
 //        String name = request.getParameter("name");
 //        response.getWriter().write(name == null ? "Hello Resumes!" : "Hello " + name + '!');
-        Storage storage = Config.get().getSqlStorage();
         StringBuilder html = new StringBuilder();
         html.append("<table>\n" +
                 "  <tr>\n" +

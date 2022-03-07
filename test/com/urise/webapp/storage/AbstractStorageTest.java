@@ -5,6 +5,8 @@ import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.SectionType;
+import com.urise.webapp.model.SimpleSection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +47,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume r = new Resume(UUID_1, "Ronald Ross");
+        r.addSection(SectionType.ACHIEVEMENT, new SimpleSection("some new"));
         storage.update(r);
         Assert.assertEquals(r, storage.get(UUID_1));
     }
