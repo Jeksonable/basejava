@@ -47,7 +47,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume r = new Resume(UUID_1, "Ronald Ross");
-        r.addSection(SectionType.ACHIEVEMENT, new SimpleSection("some new"));
+        r.addSection(SectionType.OBJECTIVE, new SimpleSection("some new"));
         storage.update(r);
         Assert.assertEquals(r, storage.get(UUID_1));
     }

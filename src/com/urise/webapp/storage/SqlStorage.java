@@ -174,8 +174,24 @@ public class SqlStorage implements Storage {
         executeCommand(conn, "INSERT INTO section (resume_uuid, section_type, section_value) VALUES (?,?,?)",
                 ps -> {
                     for (Map.Entry<SectionType, AbstractSection> e : r.getSections().entrySet()) {
+                        SectionType type = e.getKey();
+                        String description = "";
                         AbstractSection section = e.getValue();
-                        setValues(ps, r, e.getKey().name(), section.getClass().getSimpleName() + section);
+                        switch (type) {
+                            case PERSONAL:
+                            case OBJECTIVE:
+                                description = ((SimpleSection) section).getDescription();
+                                break;
+                            case ACHIEVEMENT:
+                            case QUALIFICATIONS:
+                                description = ((BulletedListSection) section).getDescriptions()
+                                        .stream()
+                                        .reduce(description, (str, des) -> str + des + "\n");
+                                break;
+                            case EDUCATION:
+                            case EXPERIENCE:
+                        }
+                        setValues(ps, r, type.name(), description);
                     }
                     ps.executeBatch();
                 });
@@ -195,15 +211,17 @@ public class SqlStorage implements Storage {
                 r.addContact(ContactType.valueOf(rs.getString("type")), value);
             } else {
                 SectionType type = SectionType.valueOf(rs.getString("section_type"));
-                String[] values = value.split("\n");
-                switch (values[0]) {
-                    case "SimpleSection":
-                        r.addSection(type, new SimpleSection(values[1]));
+                switch (type) {
+                    case PERSONAL:
+                    case OBJECTIVE:
+                        r.addSection(type, new SimpleSection(value));
                         break;
-                    case "BulletedListSection":
-                        r.addSection(type, new BulletedListSection(Arrays.copyOfRange(values, 1, values.length)));
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        r.addSection(type, new BulletedListSection(value.split("\n")));
                         break;
-                    case "OrganizationListSection":
+                    case EDUCATION:
+                    case EXPERIENCE:
                 }
             }
         }
