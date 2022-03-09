@@ -174,21 +174,11 @@ public class SqlStorage implements Storage {
         executeCommand(conn, "INSERT INTO section (resume_uuid, section_type, section_value) VALUES (?,?,?)",
                 ps -> {
                     for (Map.Entry<SectionType, AbstractSection> e : r.getSections().entrySet()) {
-                        setValues(ps, r, e.getKey().name(), getDescription(e.getValue()));
+                        AbstractSection section = e.getValue();
+                        setValues(ps, r, e.getKey().name(), section.getClass().getSimpleName() + section);
                     }
                     ps.executeBatch();
                 });
-    }
-
-    private String getDescription(AbstractSection section) {
-        if (section instanceof SimpleSection) {
-            return ((SimpleSection) section).getDescription();
-        } else if (section instanceof BulletedListSection) {
-            return ((BulletedListSection) section).getDescriptions()
-                    .stream()
-                    .reduce("", (str, des) -> str + des + "\n");
-        }
-        return "";
     }
 
     private void setValues(PreparedStatement ps, Resume r, String type, String description) throws SQLException {
@@ -204,17 +194,18 @@ public class SqlStorage implements Storage {
             if (isContact) {
                 r.addContact(ContactType.valueOf(rs.getString("type")), value);
             } else {
-                r.addSection(SectionType.valueOf(rs.getString("section_type")), getSection(value));
+                SectionType type = SectionType.valueOf(rs.getString("section_type"));
+                String[] values = value.split("\n");
+                switch (values[0]) {
+                    case "SimpleSection":
+                        r.addSection(type, new SimpleSection(values[1]));
+                        break;
+                    case "BulletedListSection":
+                        r.addSection(type, new BulletedListSection(Arrays.copyOfRange(values, 1, values.length)));
+                        break;
+                    case "OrganizationListSection":
+                }
             }
-        }
-    }
-
-    private AbstractSection getSection(String value) {
-        String[] arr = value.split("\n");
-        if (arr.length == 1) {
-            return new SimpleSection(value);
-        } else {
-            return new BulletedListSection(value.split("\n"));
         }
     }
 
