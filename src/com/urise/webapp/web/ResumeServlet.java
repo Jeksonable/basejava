@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
@@ -117,7 +118,7 @@ public class ResumeServlet extends HttpServlet {
             for (SectionType sectionType : SectionType.values()) {
                 String value = request.getParameter(sectionType.name());
                 String[] values = request.getParameterValues(sectionType.name());
-                if (HtmlUtil.isEmpty(value) && values.length < 2) {
+                if (HtmlUtil.isEmpty(value) && Arrays.stream(values).distinct().toArray().length < 2) {
                     r.getSections().remove(sectionType);
                 } else {
                     switch (sectionType) {
