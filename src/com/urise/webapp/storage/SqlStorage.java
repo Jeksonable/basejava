@@ -3,9 +3,13 @@ package com.urise.webapp.storage;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.sql.SqlHelper;
+import com.urise.webapp.util.JsonParser;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class SqlStorage implements Storage {
@@ -172,24 +176,7 @@ public class SqlStorage implements Storage {
         executeCommand(conn, "INSERT INTO section (resume_uuid, section_type, section_value) VALUES (?,?,?)",
                 ps -> {
                     for (Map.Entry<SectionType, AbstractSection> e : r.getSections().entrySet()) {
-                        SectionType type = e.getKey();
-                        String description = "";
-                        AbstractSection section = e.getValue();
-                        switch (type) {
-                            case PERSONAL:
-                            case OBJECTIVE:
-                                description = ((SimpleSection) section).getDescription();
-                                break;
-                            case ACHIEVEMENT:
-                            case QUALIFICATIONS:
-                                description = ((BulletedListSection) section).getDescriptions()
-                                        .stream()
-                                        .reduce(description, (str, des) -> str + des + "\n");
-                                break;
-                            case EDUCATION:
-                            case EXPERIENCE:
-                        }
-                        setValues(ps, r, type.name(), description);
+                        setValues(ps, r, e.getKey().name(), JsonParser.write(e.getValue(), AbstractSection.class));
                     }
                     ps.executeBatch();
                 });
@@ -209,18 +196,7 @@ public class SqlStorage implements Storage {
                 r.addContact(ContactType.valueOf(rs.getString("type")), value);
             } else {
                 SectionType type = SectionType.valueOf(rs.getString("section_type"));
-                switch (type) {
-                    case PERSONAL:
-                    case OBJECTIVE:
-                        r.addSection(type, new SimpleSection(value));
-                        break;
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS:
-                        r.addSection(type, new BulletedListSection(value.split("\n")));
-                        break;
-                    case EDUCATION:
-                    case EXPERIENCE:
-                }
+                r.addSection(type, JsonParser.read(value, AbstractSection.class));
             }
         }
     }

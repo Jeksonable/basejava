@@ -1,6 +1,7 @@
 package com.urise.webapp.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,6 +11,10 @@ public class OrganizationListSection extends AbstractSection {
     private List<Organization> organizations;
 
     public OrganizationListSection() {
+    }
+
+    public OrganizationListSection(Organization... organizations) {
+        this(Arrays.asList(organizations));
     }
 
     public OrganizationListSection(List<Organization> organizations) {

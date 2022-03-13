@@ -5,6 +5,8 @@ import java.util.Objects;
 public class SimpleSection extends AbstractSection {
     private static final long serialVersionUID = 1L;
 
+    public static final SimpleSection EMPTY = new SimpleSection("");
+
     private String description;
 
     public SimpleSection() {

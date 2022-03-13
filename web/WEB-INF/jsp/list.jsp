@@ -14,8 +14,9 @@
 <jsp:include page="fragments/header.jsp"/>
 <section>
     <h3>Количество резюме в базе = ${size}</h3>
-    <h3>Добавить новое резюме <a href="resume?uuid=<%=UUID.randomUUID()%>&action=new"><img src="img/add.png"></a></h3>
-    <table border="1" cellpadding="8" cellspacing="0">
+    <h3>Добавить новое резюме <a href="resume?action=new"><img src="img/add.png"></a></h3>
+    <br>
+    <table border="1" cellpadding="8" cellspacing="0" style="margin: auto">
         <tr>
             <th>Имя</th>
             <th>Email</th>

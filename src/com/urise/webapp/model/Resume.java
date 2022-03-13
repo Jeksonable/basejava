@@ -17,6 +17,17 @@ import java.util.UUID;
 public class Resume implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    public static final Resume EMPTY = new Resume();
+
+    static {
+        EMPTY.addSection(SectionType.OBJECTIVE, SimpleSection.EMPTY);
+        EMPTY.addSection(SectionType.PERSONAL, SimpleSection.EMPTY);
+        EMPTY.addSection(SectionType.ACHIEVEMENT, BulletedListSection.EMPTY);
+        EMPTY.addSection(SectionType.QUALIFICATIONS, BulletedListSection.EMPTY);
+        EMPTY.addSection(SectionType.EXPERIENCE, new OrganizationListSection(Organization.EMPTY));
+        EMPTY.addSection(SectionType.EDUCATION, new OrganizationListSection(Organization.EMPTY));
+    }
+
     // Unique identifier
     private String uuid;
     private String fullName;
